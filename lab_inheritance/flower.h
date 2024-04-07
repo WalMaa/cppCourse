@@ -12,13 +12,17 @@
 class Flower : public Drawable
 {
 	private:
-		Shape stem;
-		Shape pistil;  // center piece of flower
-		Shape leaf;
+		Shape* stem;
+		Shape* pistil;  // center piece of flower
+		Shape* leaf;
 
 		void drawPedals(PNG* canvas, const Vector2& center, int x, int y) const;
 	public:
 		Flower(const Vector2& center);
+		~Flower();
+		void copy(const Flower& other);
+		void clear();
+		Flower& operator=(const Flower& rhs);
 		void draw(PNG* canvas) const override;
 };
 
