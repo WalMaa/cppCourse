@@ -17,6 +17,9 @@
  * Destroys the current List. This function should ensure that
  * memory does not leak on destruction of a list.
  */
+#include "list.h"
+#include <iostream>
+
 template <class T>
 List<T>::~List()
 {
@@ -30,7 +33,15 @@ List<T>::~List()
 template <class T>
 void List<T>::clear()
 {
-    // @todo Graded in lab_gdb
+    ListNode *temp = head;
+    while (temp != nullptr)
+    {
+        ListNode *nextNode = temp->next;
+        delete temp;
+        temp = nullptr;
+        temp = nextNode;
+    }
+    length = 0;
 }
 
 /**
@@ -40,9 +51,12 @@ void List<T>::clear()
  * @param ndata The data to be inserted.
  */
 template <class T>
-void List<T>::insertFront(T const & ndata)
+void List<T>::insertFront(T const &ndata)
 {
-    // @todo Graded in lab_gdb
+    ListNode *newNode = new ListNode(ndata);
+    newNode->next = head;
+    head = newNode;
+    length++;
 }
 
 /**
@@ -52,24 +66,25 @@ void List<T>::insertFront(T const & ndata)
  * @param ndata The data to be inserted.
  */
 template <class T>
-void List<T>::insertBack( const T & ndata )
+void List<T>::insertBack(const T &ndata)
 {
-    // @todo Graded in lab_gdb
-    ListNode * temp = head;
+    ListNode *temp = head;
 
-    if (temp == NULL)
+    if (temp == nullptr)
     {
         head = new ListNode(ndata);
-    }
-    else
-    {
-        while (temp->next != NULL)
-            temp = temp->next;
-        temp = new ListNode(ndata);
         length++;
+        return;
     }
-}
 
+    while (temp->next != nullptr)
+    {
+        temp = temp->next;
+    }
+
+    temp->next = new ListNode(ndata);
+    length++;
+}
 
 /**
  * Reverses the current List.
@@ -90,21 +105,18 @@ void List<T>::reverse()
  * @param len The length of the remaining list to be reversed
  */
 template <class T>
-typename List<T>::ListNode* List<T>::reverse( ListNode * curr, ListNode * prev, int len )
+typename List<T>::ListNode *List<T>::reverse(ListNode *curr, ListNode *prev, int len)
 {
-    // @todo Graded in lab_gdb
-    ListNode * temp;
-    if (len <= 0)
+
+    if (curr == nullptr || len <= 0)
     {
-        curr->next = prev;
-        return curr;
+        return prev;
     }
-    else
-    {
-        temp = reverse(curr->next, curr, len-1);
-        curr->next = prev;
-        return temp;
-    }
+
+    ListNode *next = curr->next;
+    curr->next = prev;
+
+    return reverse(next, curr, len - 1);
 }
 
 /**
@@ -123,24 +135,23 @@ void List<T>::shuffle()
     // Find the center, and split the list in half
     // one should point at the start of the first half-list
     // two should point at the start of the second half-list
-    ListNode * one, * two, * prev, * temp;
+    ListNode *one, *two, *prev, *temp;
     one = two = prev = temp = head;
 
-    for (int i = 0; i < length/2; i++)
+    for (int i = 0; i < length / 2; i++)
     {
         prev = two;
         two = two->next;
     }
-    prev->next = NULL;
+    prev->next = nullptr;
 
     // interleave
-    while (two != NULL)
+    while (two != nullptr)
     {
-        temp = one->next;
-        one->next = two;
-        two = two->next;
-        one->next->next = temp;
+    temp = one->next;
+    one->next = two;
+    two = two->next; // Move two to the next node
+    one->next->next = temp; // Link two to the original next node of one
+    one = temp; // Move one to the original next node
     }
 }
-
-
