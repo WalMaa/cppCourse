@@ -9,6 +9,7 @@
 
 #include "logfile_parser.h"
 #include <iostream>
+#include <algorithm> // For std::find
 
 using std::string;
 using std::vector;
@@ -67,6 +68,13 @@ LogfileParser::LogfileParser( const string & fname ) : whenVisitedTable( 256 ) {
          * this problem. This should also build the uniqueURLs member
          * vector as well.
          */
+        if (std::find(uniqueURLs.begin(), uniqueURLs.end(), ll.url) == uniqueURLs.end())
+        {   
+            uniqueURLs.push_back(ll.url);
+        }
+
+        whenVisitedTable.insert(ll.customer+ll.url, ll.date);
+        
     }
     infile.close();
 }
@@ -79,14 +87,8 @@ LogfileParser::LogfileParser( const string & fname ) : whenVisitedTable( 256 ) {
  * @return A boolean value indicating whether the customer visited the url.
  */
 bool LogfileParser::hasVisited( const string & customer, const string & url ) const {
-    /**
-     * @todo Implement this function.
-     */
-
-    (void) customer; // prevent warnings... When you implement this function, remove this line.
-    (void) url;      // prevent warnings... When you implement this function, remove this line.
-
-    return true; // replaceme
+    std::string index = customer+url;
+    return whenVisitedTable.keyExists(index);
 }
 
 /**
@@ -100,14 +102,7 @@ bool LogfileParser::hasVisited( const string & customer, const string & url ) co
  *  url.
  */
 time_t LogfileParser::dateVisited( const string & customer, const string & url ) const {
-    /**
-     * @todo Implement this function.
-     */
-
-    (void) customer; // prevent warnings... When you implement this function, remove this line.
-    (void) url;      // prevent warnings... When you implement this function, remove this line.
-
-    return time_t(); // replaceme
+    return whenVisitedTable.find(customer+url);
 }
 
 /**

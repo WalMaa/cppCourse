@@ -9,10 +9,10 @@
 
 #include "anagram_finder.h"
 
+using std::endl;
+using std::ofstream;
 using std::string;
 using std::vector;
-using std::ofstream;
-using std::endl;
 
 /**
  * Constructs an AnagramFinder based on a filename to read potential
@@ -21,8 +21,9 @@ using std::endl;
  * @param ifilename The name of the file to read in.
  */
 template <template <class K, class V> class Dict>
-AnagramFinder<Dict>::AnagramFinder( const string & ifilename ) : file( true ), 
-        filename( ifilename ) {
+AnagramFinder<Dict>::AnagramFinder(const string &ifilename) : file(true),
+                                                              filename(ifilename)
+{
     /* nothing */
 }
 
@@ -33,8 +34,9 @@ AnagramFinder<Dict>::AnagramFinder( const string & ifilename ) : file( true ),
  * @param istrings The set of strings to use for this finder.
  */
 template <template <class K, class V> class Dict>
-AnagramFinder<Dict>::AnagramFinder( const vector<string> & istrings ) : file( false ),
-        strings( istrings ) {
+AnagramFinder<Dict>::AnagramFinder(const vector<string> &istrings) : file(false),
+                                                                     strings(istrings)
+{
     /* nothing */
 }
 
@@ -46,14 +48,26 @@ AnagramFinder<Dict>::AnagramFinder( const vector<string> & istrings ) : file( fa
  * @return A boolean value indicating whether word is an anagram of test.
  */
 template <template <class K, class V> class Dict>
-bool AnagramFinder<Dict>::checkWord( const string & word, const string & test ) {
-    /**
-     * @todo Implement this function! You should use the provided
-     * templated hashtable class Dict.
-     */
+bool AnagramFinder<Dict>::checkWord(const string &word, const string &test)
+{
+ if (word.length() != test.length()) {
+        return false;
+    }
 
-    (void) word; // prevent warnings... When you implement this function, remove this line.
-    (void) test; // prevent warnings... When you implement this function, remove this line.
+    Dict<char, int> charCount(25); 
+
+    // Increase count for each character in the first string
+    for (char c : word) {
+        charCount[c]++;
+    }
+
+    // Decrease count for each character in the second string
+    for (char c : test) {
+        if (charCount[c] == 0) {
+            return false;
+        }
+        charCount[c]--;
+    }
 
     return true;
 }
@@ -64,23 +78,29 @@ bool AnagramFinder<Dict>::checkWord( const string & word, const string & test ) 
  * @param word The word we wish to find anagrams of inside the finder.
  */
 template <template <class K, class V> class Dict>
-vector<string> AnagramFinder<Dict>::getAnagrams( const string & word ) {
+vector<string> AnagramFinder<Dict>::getAnagrams(const string &word)
+{
     // set up the return vector
     vector<string> ret;
 
-    if( file ) {
-        TextFile infile( filename );
+    if (file)
+    {
+        TextFile infile(filename);
         string line;
         vector<string> tests;
-        while( infile.good() ) {
+        while (infile.good())
+        {
             string test = infile.getNextWord();
-            if( checkWord( word, test ) ) 
-                ret.push_back( test );
+            if (checkWord(word, test))
+                ret.push_back(test);
         }
-    } else {
-        for( size_t i = 0; i < strings.size(); i++ ) {
-            if( checkWord( word, strings[i] ) )
-                ret.push_back( strings[i] );
+    }
+    else
+    {
+        for (size_t i = 0; i < strings.size(); i++)
+        {
+            if (checkWord(word, strings[i]))
+                ret.push_back(strings[i]);
         }
     }
     return ret;
@@ -94,12 +114,14 @@ vector<string> AnagramFinder<Dict>::getAnagrams( const string & word ) {
  * @param output_file The name of the file we want to write to.
  */
 template <template <class K, class V> class Dict>
-void AnagramFinder<Dict>::writeAnagrams( const string & word, 
-        const string & output_file ) {
-    vector<string> anagrams = getAnagrams( word );
+void AnagramFinder<Dict>::writeAnagrams(const string &word,
+                                        const string &output_file)
+{
+    vector<string> anagrams = getAnagrams(word);
     ofstream outfile(output_file.c_str());
-    if( outfile.is_open() ) {
-        for( size_t i = 0; i < anagrams.size(); i++ )
+    if (outfile.is_open())
+    {
+        for (size_t i = 0; i < anagrams.size(); i++)
             outfile << anagrams[i] << endl;
     }
     outfile.close();
