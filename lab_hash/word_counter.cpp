@@ -47,7 +47,8 @@ vector<pair<string, int>> WordFreq<Dict>::getWords(int threshold) const
         }
         if (!found)
         {
-            ret.push_back(std::pair(word, 1));
+            ret.push_back(std::pair<std::string, int>(word, 1));
+
         }
     }
 
