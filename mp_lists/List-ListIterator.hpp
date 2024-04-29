@@ -22,13 +22,14 @@ public:
     // Post-Increment, iter++
     ListIterator operator++(int)
     {
-        ListNode *temp = position_;
+        ListIterator tmp(*this); // Using copy constructor to create a temporary iterator
+
         if (position_ != nullptr)
         {
             position_ = position_->next;
         }
 
-        return *this;
+        return tmp;
     }
 
     // Pre-Decrement, --iter
@@ -45,13 +46,14 @@ public:
     // Post-Decrement, iter--
     ListIterator operator--(int)
     {
-        ListNode *temp = position_;
+        ListIterator tmp(*this); // Using copy constructor to create a temporary iterator
+
         if (position_ != nullptr)
         {
             position_ = position_->prev;
         }
 
-        return *this;
+        return tmp;
     }
 
     bool operator!=(const ListIterator &rhs)

@@ -171,18 +171,38 @@ typename List<T>::ListNode *List<T>::split(ListNode *start, int splitPoint)
 template <typename T>
 void List<T>::tripleRotate()
 {
-  ListNode *start = head_;
+  if (head_ == nullptr || head_->next == nullptr || head_->next->next == nullptr)
+    return; 
 
-  while (split(start, 3) != nullptr)
+  ListNode *current = head_;
+
+  while (current != nullptr && current->next != nullptr && current->next->next != nullptr)
   {
-    ListNode first = start;
-    ListNode second;
-    ListNode third;
+    ListNode *first = current;
+    ListNode *second = first->next;
+    ListNode *third = second->next;
+    ListNode *next = third->next;
 
+    // Rotating the nodes as per 1,2,3 -> 2,3,1
+    if (first == head_) {
+      head_ = second;  // Update the head to point to the new first node
+    } else {
+      second->prev = first->prev;  // Linking second node back to the list part before current triplet
+      first->prev->next = second;
+    }
+
+    third->next = first;
+    first->next = next;
+    if (next != nullptr) {
+      next->prev = first;
+    }
+    first->prev = third;
+
+    current = next;
   }
-  
-  
 }
+
+
 
 /**
  * Reverses the current List.
@@ -207,8 +227,51 @@ void List<T>::reverse()
 template <typename T>
 void List<T>::reverse(ListNode *&startPoint, ListNode *&endPoint)
 {
-  /// @todo Graded in MP3.2
+    if (startPoint == nullptr || endPoint == nullptr)
+        return;
+
+    ListNode *current = startPoint;
+    ListNode *prev = nullptr, *next = nullptr;
+    ListNode *endNext = endPoint->next; // To reconnect the end of the reversed segment back to the list
+
+    // Reverse the segment from startPoint to endPoint
+    while (current != endNext) {
+        next = current->next; // Store next node
+
+        // Reverse current node's pointers
+        current->next = prev;
+        current->prev = next;
+
+        // Move prev and current one step forward
+        prev = current;
+        current = next;
+    }
+
+    // Reconnect the reversed segment with the rest of the list
+    if (startPoint->prev) {
+        startPoint->prev->next = endPoint;
+    }
+    if (endNext) {
+        endNext->prev = startPoint;
+    }
+
+    // Update startPoint and endPoint to new locations
+    ListNode *temp = startPoint;
+    startPoint = endPoint;
+    endPoint = temp;
+
+    // Fix the prev and next pointers of the now reversed segment endpoints
+    endPoint->next = startPoint->prev;  // Connecting endPoint to the list before startPoint
+    startPoint->prev = endNext;  // Connecting startPoint to the list after endPoint
+
+    // If the reversed segment includes the head of the list, update the head
+    if (startPoint->prev == nullptr) {
+        head_ = startPoint;
+    }
 }
+
+
+
 
 /**
  * Reverses blocks of size n in the current List. You should use your
